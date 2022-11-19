@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package proto;
+
+option  go_package = ".;hi";
+
+message HiReq {
+    string name = 1;
+}
+
+message HiRsp {
+    string message = 1;
+}
