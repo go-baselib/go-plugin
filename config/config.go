@@ -1,6 +1,11 @@
 package config
 
-import "sort"
+import (
+	"fmt"
+	"sort"
+
+	"gopkg.in/yaml.v3"
+)
 
 var gCfg *Config
 
@@ -15,17 +20,26 @@ type GRPC struct {
 }
 
 type Plugin struct {
-	Name  string
-	Level int
+	Name  string `yaml:"name"`
+	Level int    `yaml:"level"`
 }
 
-func Init() {
-	gCfg = &Config{
-		GRPC: GRPC{Host: "0.0.0.0", Port: 9999},
-		Plugins: []Plugin{
-			{Name: "hi"},
-		},
+func Init(conf []byte) {
+	var (
+		v = &Config{
+			GRPC: GRPC{Host: "0.0.0.0", Port: 9999},
+			Plugins: []Plugin{
+				{Name: "hi"},
+			},
+		}
+		err = yaml.Unmarshal(conf, v)
+	)
+	if err != nil {
+		panic(err)
 	}
+	fmt.Printf("conf: %+v", v)
+
+	gCfg = v
 	sort.Slice(gCfg.Plugins, func(i, j int) bool {
 		if gCfg.Plugins[i].Level != gCfg.Plugins[j].Level {
 			return gCfg.Plugins[i].Level < gCfg.Plugins[j].Level
