@@ -3,7 +3,10 @@ grpc:
     port: 9999
 
 plugins:
-    - name: "hi"
+    - enabled: true
+      name: "hi"
       level: 1
+      path: "./bin/hi"
+
 #    - name: "hello"
 #      level: 2

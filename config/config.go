@@ -10,8 +10,9 @@ import (
 var gCfg *Config
 
 type Config struct {
-	GRPC    GRPC     `yaml:"grpc"`
-	Plugins []Plugin `yaml:"plugins"`
+	GRPC    GRPC              `yaml:"grpc"`
+	Plugins []Plugin          `yaml:"plugins"`
+	plugins map[string]Plugin `yaml:"-"`
 }
 
 type GRPC struct {
@@ -20,8 +21,10 @@ type GRPC struct {
 }
 
 type Plugin struct {
-	Name  string `yaml:"name"`
-	Level int    `yaml:"level"`
+	Enabled bool   `yaml:"enabled"`
+	Name    string `yaml:"name"`
+	Level   int    `yaml:"level"`
+	Path    string `yaml:"path"`
 }
 
 func Init(conf []byte) {
@@ -37,9 +40,13 @@ func Init(conf []byte) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("conf: %+v", v)
+	v.plugins = make(map[string]Plugin, len(v.Plugins))
+	for _, p := range v.Plugins {
+		v.plugins[p.Name] = p
+	}
 
 	gCfg = v
+	fmt.Printf("conf: %+v", gCfg)
 	sort.Slice(gCfg.Plugins, func(i, j int) bool {
 		if gCfg.Plugins[i].Level != gCfg.Plugins[j].Level {
 			return gCfg.Plugins[i].Level < gCfg.Plugins[j].Level
@@ -51,4 +58,8 @@ func Init(conf []byte) {
 
 func GetConfig() *Config {
 	return gCfg
+}
+
+func GetPlugin(name string) Plugin {
+	return gCfg.plugins[name]
 }

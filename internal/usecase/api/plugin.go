@@ -6,6 +6,7 @@ import (
 	"os/exec"
 
 	bp "github.com/go-baselib/go-plugin"
+	"github.com/go-baselib/go-plugin/config"
 	"github.com/go-baselib/go-plugin/pkg/server"
 
 	"github.com/grpcprotocol/plugin"
@@ -26,11 +27,18 @@ func (p *PluginAPI) Exec(ctx context.Context, in *plugin.ExecReq) (*plugin.ExecR
 		return nil, fmt.Errorf("TypeURL:%s 没有可处理插件", in.GetPayload().GetTypeUrl())
 	}
 
-	var name = bp.GetName(typeURL)
+	var (
+		name       = bp.GetName(typeURL)
+		pluginConf = config.GetPlugin(name)
+	)
+	if !pluginConf.Enabled {
+		return nil, fmt.Errorf("name:%s 插件未开启", name)
+	}
+
 	var client = hp.NewClient(&hp.ClientConfig{
 		HandshakeConfig:  bp.Handshake,
 		Plugins:          hp.PluginSet{name: pl},
-		Cmd:              exec.Command("sh", "-c", "./bin/"+name),
+		Cmd:              exec.Command("sh", "-c", pluginConf.Path),
 		AllowedProtocols: []hp.Protocol{hp.ProtocolGRPC},
 	})
 	defer client.Kill()
