@@ -27,7 +27,7 @@ func (p *PluginRepo) Store(ctx context.Context, e entity.Plugin) {
 		}
 	})
 
-	if err = p.db.Create(&e).Error; err != nil {
+	if err = p.db.Model(&entity.Plugin{}).Create(&e).Error; err != nil {
 		fmt.Printf("save plugin exec info failed: %+v\n", err)
 	}
 }

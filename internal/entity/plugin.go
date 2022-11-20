@@ -10,3 +10,7 @@ type Plugin struct {
 	Rsp string `gorm:"column:f_rsp"`
 	Err string `gorm:"column:f_err"`
 }
+
+func (p *Plugin) TableName() string {
+	return "t_plugin"
+}
