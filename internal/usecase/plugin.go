@@ -23,10 +23,12 @@ func (p *PluginUseCase) Exec(ctx context.Context, in *plugin.ExecReq) (*plugin.E
 		p.repo.Store(ctx, e)
 	}()
 
+	e.Req = in.String()
 	var out, err = p.api.Exec(ctx, in)
 	if err != nil {
 		e.Err = err.Error()
 		return out, err
 	}
+	e.Rsp = out.String()
 	return out, nil
 }

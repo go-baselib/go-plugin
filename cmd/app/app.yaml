@@ -8,5 +8,6 @@ plugins:
       level: 1
       path: "./bin/hi"
 
-#    - name: "hello"
-#      level: 2
+db:
+    type: "sqlite"
+    dsn: "./plugin.db"

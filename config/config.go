@@ -12,6 +12,7 @@ var gCfg *Config
 type Config struct {
 	GRPC    GRPC              `yaml:"grpc"`
 	Plugins []Plugin          `yaml:"plugins"`
+	DB      DB                `yaml:"db"`
 	plugins map[string]Plugin `yaml:"-"`
 }
 
@@ -25,6 +26,11 @@ type Plugin struct {
 	Name    string `yaml:"name"`
 	Level   int    `yaml:"level"`
 	Path    string `yaml:"path"`
+}
+
+type DB struct {
+	Type string `yaml:"type"` // example: mysql/postgresql/sqlite
+	DSN  string `yaml:"dsn"`
 }
 
 func Init(conf []byte) {
